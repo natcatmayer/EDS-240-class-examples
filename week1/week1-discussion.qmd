@@ -1,0 +1,6 @@
+---
+title: "Discussion 1: Data Wrangling"
+author: "Natalie Mayer"
+format: html
+editor: visual
+---
