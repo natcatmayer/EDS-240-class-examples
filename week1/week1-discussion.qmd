@@ -4,3 +4,74 @@ author: "Natalie Mayer"
 format: html
 editor: visual
 ---
+
+# Import Fracking Data
+```{r}
+library(tidyverse)
+library(janitor)
+library(here) 
+library(lubridate)
+library(usdata)
+
+fracking <- read_csv(here("week1", "data", "registryupload_1.csv"))
+```
+
+# Data exploration 
+```{r}
+dim(fracking) # number of columns and rows 
+
+str(fracking) # structure 
+```
+
+
+# Clean fracking data 
+```{r}
+fracking_clean <- fracking %>%
+  clean_names() %>%
+  mutate(job_start_date = str_remove(job_start_date, " AM")) %>%
+  mutate(datetime_start = mdy_hms(job_start_date)) %>%
+  mutate(year = year(datetime_start)) %>%
+  select(datetime_start, year, state_name, well_name, total_base_water_volume) %>%
+  filter(!str_detect(state_name, pattern = "\\?")) %>% #drop rows where state name ends in a question mark 
+  mutate(state_name = ifelse(str_length(state_name) == 2, 
+                             abbr2state(state_name), 
+                             state_name)) %>%
+  mutate(state_name = case_when(
+    state_name == "Colordao" ~ "Colorado", 
+    state_name %in% c("Louisianna", "Lousiana", "Loiusiana") ~ "Louisiana", 
+    state_name %in% c("Norh Dakota", "Norht Dakota", "North Dakata", "North Dakotta", "Noth Dakota") ~ "North Dakota", 
+    state_name %in% c("Pennslvania", "Pennsylvanya", "Pennsylavania", "Penssylvania") ~ "Pennsylvania",
+    state_name == "Wyominng" ~ "Wyoming",
+    state_name == "New Mexcio" ~ "New Mexico", 
+    state_name %in% c("Texasa", "Texs") ~ "Texas", 
+    state_name == "West Viginia" ~ "West Virginia", 
+    TRUE ~ state_name
+  )) %>%
+  filter(!state_name %in% c("Beaver", "Beckham", "Harper", "Hemphill", "Midland", "Red River", "Roosevelt", "Rusk", "State", "Ward")) %>%
+  mutate(state_abb = state2abbr(state_name)) %>%
+  relocate(state_abb, .after = state_name) %>%
+  rename(total_base_water_volume_gal = total_base_water_volume) %>%
+  drop_na(total_base_water_volume_gal) %>%
+  arrange(datetime_start)
+  
+```
+
+
+```{r}
+# exploratory data viz 
+
+fracking_clean %>%
+  filter(state_name %in% c("Texas", "Colorado", "North Dakota")) %>%
+  filter(year == 2015) %>%
+  group_by(state_name) %>%
+  ggplot(aes(x = state_name, 
+             y = total_base_water_volume_gal)) + 
+  geom_jitter(width = 0.3, alpha = 0.5, color = "gray15") + 
+  geom_violin(color = "red4", alpha = 0.3) + 
+  scale_y_continuous(labels = scales::label_comma()) + 
+  labs(y = "Total base water volume (gal)") + 
+  coord_flip() + 
+  theme_minimal() + 
+  theme(axis.title.y = element_blank())
+```
+
