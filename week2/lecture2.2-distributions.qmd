@@ -93,6 +93,11 @@ missing_temps <- naniar::vis_miss(bottom)
 #| echo: true
 
 # histogram with all 12 months ----
+
+mko_clean |>
+  mutate(month_name = factor(month_name, levels = month.name)) |>
+  ggplot(aes(x = Temp_bot, fill = month_name)) + 
+  geom_histogram(position = "identity", alpha = 0.5)
 ```
 
 ### Alt 1: small multiples
@@ -106,7 +111,9 @@ missing_temps <- naniar::vis_miss(bottom)
 # histogram faceted by month ----
 mko_clean |> 
   mutate(month_name = factor(month_name, levels = month.name)) |> 
-  ggplot(aes(x = Temp_bot, fill = month_name))
+  ggplot(aes(x = Temp_bot)) + 
+  geom_histogram() + 
+  facet_wrap(~month_name)
 ```
 
 ### Alt 2: fewer groups + update colors + modify bin widths
@@ -119,8 +126,10 @@ mko_clean |>
 # histogram with fewer months ----
 mko_clean |> 
   mutate(month_name = factor(month_name, levels = month.name)) |> 
+  filter(month_name %in% c("April", "June", "October")) |>
   ggplot(aes(x = Temp_bot, fill = month_name)) +
-  geom_histogram(position = "identity", alpha = 0.5)
+  geom_histogram(position = "identity", alpha = 0.5, color = "black", binwidth = 1) + 
+  scale_fill_manual(values = c("#2C5374", "#ADD8E6", "#8B3A3A"))
 ```
 
 ## Density plots
@@ -137,7 +146,8 @@ mko_clean |>
 # density plot with all 12 months ----
 mko_clean |> 
   mutate(month_name = factor(x = month_name, levels = month.name)) |> 
-  ggplot(aes(x = Temp_bot, fill = month_name)) 
+  ggplot(aes(x = Temp_bot, fill = month_name)) + 
+  geom_density(alpha = 0.5)
 ```
 
 ### Alt 1: small multiples
@@ -151,7 +161,8 @@ mko_clean |>
 mko_clean |> 
   mutate(month_name = factor(month_name, levels = month.name)) |> 
   ggplot(aes(x = Temp_bot)) +
-  geom_density() 
+  geom_density(fill = "grey30") + 
+  facet_wrap(~month_name)
 ```
 
 ### Alt 2: fewer groups + update colors + modify band widths
@@ -165,7 +176,8 @@ mko_clean |>
 mko_clean |> 
   filter(month_name %in% c("April", "June", "October")) |> 
   ggplot(aes(x = Temp_bot, fill = month_name)) +
-  geom_density(alpha = 0.5) 
+  geom_density(alpha = 0.5, adjust = 1) + 
+  scale_fill_manual(values = c("#2C5374", "#ADD8E6", "#8B3A3A"))
 ```
 
 ## A few more histograms & density plots
@@ -250,6 +262,12 @@ ggplot(penguins, aes(x = body_mass_g, y = after_stat(count))) +
 
 # fill with color gradient; use these colors: c("#2C5374","#849BB4", "#D9E7EC", "#EF8080", "#8B3A3A") ----
 
+ggplot(mko_clean, aes(x = Temp_bot, y = month_name, fill = after_stat(x))) + 
+  ggridges::geom_density_ridges_gradient(rel_min_height = 0.005, scale = 4) + 
+  scale_fill_gradientn(colors = c("#2C5374","#849BB4", "#D9E7EC", "#EF8080", "#8B3A3A")) + 
+  scale_y_discrete(limits = rev(month.name)) + 
+  theme_classic()
+
 ```
 
 ### Alt 1: reorder groups + adjust overlap & tails
@@ -301,6 +319,10 @@ ggplot(mko_clean, aes(x = Temp_bot, y = month_name))
 #| warning: false
 
 # boxplot with all 12 months ----
+ggplot(mko_clean, aes(x = month_name, y = Temp_bot)) + 
+  geom_boxplot() + 
+  scale_x_discrete(limits = rev(month.name)) + 
+  coord_flip()
 ```
 
 ### Alt 1: modify outliers
@@ -325,10 +347,12 @@ ggplot(mko_clean, aes(x = month_name, y = Temp_bot)) +
 #| warning: false
 
 # highlight a particular group ----
-ggplot(mko_clean, aes(x = month_name, y = Temp_bot)) +
+ggplot(mko_clean, aes(x = month_name, y = Temp_bot, fill = month_name)) +
   geom_boxplot() +
   scale_x_discrete(limits = rev(month.name)) + 
-  coord_flip()
+  gghighlight::gghighlight(month_name == "October") +
+  coord_flip() + 
+  theme(legend.position = "none")
 ```
 
 ### Alt 3: jitter raw data (using `{palmerpenguins}` data) 
@@ -340,7 +364,8 @@ ggplot(mko_clean, aes(x = month_name, y = Temp_bot)) +
 
 # add jittered data points ----
 ggplot(palmerpenguins::penguins, aes(x = species, y = body_mass_g)) +
-  geom_boxplot()
+  geom_boxplot() + 
+  geom_jitter(alpha = 0.5, size = 0.5, width = 0.5)
 ```
 
 ### Alt 4: dodged groups
@@ -352,7 +377,8 @@ ggplot(palmerpenguins::penguins, aes(x = species, y = body_mass_g)) +
 
 # dodge groups by year ----
 ggplot(palmerpenguins::penguins, aes(x = species, y = body_mass_g)) +
-  geom_boxplot(outlier.shape = NA) 
+  geom_boxplot(outlier.shape = NA) + 
+  geom_jitter(alpha = 0.5, size = 0.5)
 ```
 
 ### Alt 5: overlay beeswarm
@@ -377,7 +403,10 @@ ggplot(palmerpenguins::penguins, aes(x = species, y = body_mass_g)) +
 #| warning: false
 
 # violin plot ----
-ggplot(mko_clean, aes(x = month_name, y = Temp_bot))
+ggplot(mko_clean, aes(x = month_name, y = Temp_bot)) + 
+  geom_violin() + 
+  geom_boxplot(width = 0.1, color = "gray", alpha = 0.5) + 
+  coord_flip()
 ```
 
 ### Alt 1: overlay boxplot
