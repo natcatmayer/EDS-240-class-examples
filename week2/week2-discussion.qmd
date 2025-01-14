@@ -7,7 +7,6 @@ editor: visual
 
 Directions: https://eds-240-data-viz.github.io/course-materials/discussion/week2/week2-exercise.html
 
-
 ```{r}
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                                    setup                                 ----
@@ -55,7 +54,23 @@ drought_clean |>
   
   # remove drought_lvl "None" & filter for just CA ----
   filter(drought_lvl != "None",
-         state_abb == "CA") |> 
+         state_abb == "CA") |>
+  ggplot(aes(x = date, y = area_pct, fill = drought_lvl_long)) + 
+  geom_area(position = position_stack(reverse = TRUE)) + 
+  scale_fill_manual(values = c("#853A04", "#FF0100", "#FFC200", "#FFDB66", "#FEFF03")) + 
+  scale_x_date(breaks = scales::breaks_pretty(n = 12), 
+               expand = c(0,0)) + 
+  scale_y_continuous(breaks = scales::breaks_pretty(n = 10), 
+                     expand = c(0,0), 
+                     label = scales::label_percent(scale = 1)) + 
+  theme_minimal() +
+  labs(title = "Drought Area in California", 
+       x = " ", 
+       y = " ", 
+       fill = " ") +
+  theme(plot.title = element_text(hjust = 0.5, size = 17, family = "Comic Sans MS")) +
+  theme(legend.position = "bottom")
   
-  # pipe into ggplot here!
+  
+
 ```
