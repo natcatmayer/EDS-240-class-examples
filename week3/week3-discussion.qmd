@@ -1,0 +1,24 @@
+---
+title: "Week 3 Discussion"
+author: "Natalie Mayer"
+format: html
+editor: visual
+---
+
+```{r}
+#| eval: true
+#| echo: false
+#| fig-cap: "Figure caption text goes here"
+#| fig-alt: "Alt text goes here"
+
+library(ggplot2)
+library(palmerpenguins)
+
+ggplot(data = penguins, aes(x = body_mass_g, fill = species)) +
+  geom_histogram(alpha = 0.5, 
+                 position = "identity") +
+  scale_fill_manual(values = c("darkorange","purple","cyan4")) +
+  labs(x = "Body mass (g)",
+       y = "Frequency",
+       title = "Penguin body masses")
+```
