@@ -7,6 +7,8 @@ editor: visual
 
 ```{r}
 #| eval: true
+#| warning: false
+#| message: false
 #| echo: false
 #| fig-cap: "Figure caption text goes here"
 #| fig-alt: "Alt text goes here"
