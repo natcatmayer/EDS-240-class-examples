@@ -5,13 +5,15 @@ format: html
 editor: visual
 ---
 
+**Example 1**
+
 ```{r}
 #| eval: true
 #| warning: false
 #| message: false
 #| echo: false
-#| fig-cap: "Figure caption text goes here"
-#| fig-alt: "Alt text goes here"
+#| fig-cap: "Gentoo penguin body mass (teal) is typically larger than Adelie (orange) and Chinstrap (purple) penguins"
+#| fig-alt: "Histogram of the distribution of body mass of 3 penguin species shows that Gentoo are about 2,000 grams larger on average than Adelie and Chinstrap which are about 3,500 grams"
 
 library(ggplot2)
 library(palmerpenguins)
@@ -24,3 +26,11 @@ ggplot(data = penguins, aes(x = body_mass_g, fill = species)) +
        y = "Frequency",
        title = "Penguin body masses")
 ```
+
+**Example 2**
+
+![](example_2.png){fig-alt="Dot plot of monthly global temperatures between 1850-2023 shows warming trend, with increasing rates of warming after 1975."}
+
+**Example 3**
+
+<img src="example_3.png" alt="Global heat map of over 2.6 billion species show that observations are orders of magnitude higher in high-income countries" width="700px"/>
