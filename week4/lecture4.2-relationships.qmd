@@ -26,19 +26,11 @@ library(metajam)
 library(tidyverse)
 library(ggExtra)
 library(ggdensity)
+```
 
-#...................download data from DataOne...................
-# you only need to do this once (then I recommend commenting it out)!
-download_d1_data("https://cn.dataone.org/cn/v2/resolve/https%3A%2F%2Fpasta.lternet.edu%2Fpackage%2Fdata%2Feml%2Fknb-lter-hbr%2F208%2F11%2F3b3cf7ea447cb875d7c7d68ebdfd24c7",
-                 path = here::here("week4")) 
 
-#  ~ NOTE: You should rename the downloaded folder to 'data/' so that it's ignored by .gitignore! ~
-
-#....................read in downloaded files....................
-stream_chem_all <- read_d1_files(here::here("week4", "data"))
-
-#........................get the data file.......................
-stream_chem_data <- stream_chem_all$data
+```{r}
+stream_chem_data <- read_csv(here::here("week4/data/HubbardBrook_weekly_stream_chemistry.csv"))
 ```
 
 ## Scatter plots
@@ -50,6 +42,10 @@ stream_chem_data <- stream_chem_all$data
 #| echo: true
 #| warning: false
 # basic scatter plot ----
+p1 <- stream_chem_data |>
+  filter(waterYr == 2021) |>
+  ggplot(aes(x = DOC, y = pH)) + 
+  geom_point()
 ```
 
 ### Alt 1: add a rug plot
