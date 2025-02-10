@@ -30,16 +30,18 @@ lobs <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1DkDVc
   mutate(temp = as.factor(temp))
 
 # alternatively, read in csv file ----
-# lobs <- read_csv(here::here("week6", "data", "metabolism-foraging-data.csv")) |>
-#   mutate(temp = as.factor(temp))
+lobs <- read_csv(here::here("week6", "data", "metabolism_foraging_data.csv")) |>
+   mutate(temp = as.factor(temp))
 
 #.....................read in mono lake data.....................
 
 # read in Google Sheet ----
 mono <- googlesheets4::read_sheet("https://docs.google.com/spreadsheets/d/1o0-89RFp2rI2y8hMQWy-kquf_VIzidmhmVDXQ02JjCA/edit#gid=164128885")
 
+
 # alternatively, read in csv ----
 # mono <- read_csv(here::here("week6", "data", "mono.csv"))
+mono <- read_csv(here::here("week6/data/mono.csv"))
 ```
 
 ## Lobster plot
@@ -171,6 +173,16 @@ lob_plot +
 #| echo: true
 # create base plot ----
 ggplot(data = mono, aes(x = year, y = lake_level)) +
+  annotate(
+    geom = "rect",
+    xmin = 1941, xmax = 1983,
+    ymin = 6350, ymax = 6440,
+    fill = "gray90") + 
+  annotate(
+    geom = "text", 
+    x = 1962, y = 6425,
+    label = "unrestricted diversions\n(1941 - 1983)",
+    size = 3) +
   geom_line() +
   labs(x = "\nYear",
        y = "Lake surface level\n(feet above sea level)\n",
@@ -183,14 +195,21 @@ ggplot(data = mono, aes(x = year, y = lake_level)) +
                      breaks = c(6370, 6400, 6430),
                      expand = c(0,0),
                      labels = scales::label_comma()) +
+  geom_hline(yintercept = 6360,
+  linetype = "dashed") + 
+  annotate(
+    geom = "text",
+    x = 1900, y = 6366,
+    label = "Decreased brine shrimp abundance expected\n(6,3,60 feet above sea level)",
+    size = 3) +
   theme_light() +
   theme(
     plot.title.position = "plot",
     plot.title = element_text(size = 16),
     axis.title = element_text(size = 12),
     axis.text = element_text(size = 10),
-    plot.caption = element_text(face = "italic")
-    )
+    plot.caption = element_text(face = "italic"))
+    
 ```
 
 ### Add annotations
