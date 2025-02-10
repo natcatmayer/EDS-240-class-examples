@@ -62,10 +62,21 @@ library(ggtext)
 #......................import Google fonts.......................
 # `name` is the name of the font as it appears in Google Fonts
 # `family` is the user-specified id that you'll use to apply a font in your ggpplot
+font_add_google(name = "Josefin Sans", family = "josefin")
+font_add_google(name = "Sen", family = "sen")
 
 #....................import Font Awesome fonts...................
+font_add(family = "fa-brands",
+         regular = here::here("week6/fonts/brands-regular-400.otf"))
+
+font_add(family = "fa-regular", 
+         regular = here::here("week6/fonts/free-regular-400.otf"))
+
+font_add(family = "fa-solid", 
+         regular = here::here("week6/fonts/free-solid-900.otf"))
 
 #......enable {showtext} rendering for all newly opened GDs......
+showtext_auto()
 
 #..........................import data...........................
 # find import code at: https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-03-05#grab-the-clean-data-here
@@ -183,7 +194,10 @@ plot
 # to avoid some annoying typing, feel free to copy these into our palette vector:
 # "males" = "#2D7787", "females" = "#FC6B4B",  "dark_text" = "#0C1509", "light_text" = "#4E514D"
 
+earnings_pal <- c("males" = "#2D7787", "females" = "#FC6B4B",  "dark_text" = "#0C1509", "light_text" = "#4E514D")
+
 # preview it ----
+monochromeR::view_palette(earnings_pal)
 ```
 
 ## Update plot colors & fonts
@@ -194,8 +208,26 @@ plot
 #| warning: false
 #| out-width: "100%"
 #.........................create caption.........................
+github_icon <- "&#xf09b"
+github_username <- "natcatmayer"
+
+caption <- glue::glue(
+  "Data Source: TidyTuesday (March 5, 2019)<br>
+  <span style='font-family:fa-brands;'>{github_icon};</span>
+  {github_username}"
+)
 
 #........................create subtitle.........................
+money_icon <- "&#xf3d1"
+
+subtitle <- glue::glue(
+  "<span style='font-family:fa-regular;'>{money_icon};</span>
+  Median Earnings of full-time 
+  <span style='color:#2D7787;'>**male**</span>
+  vs. 
+  <span style='color:#FC6B4B;'>**female**</span>
+  workers by ocupation in 2016"
+)
 
 #..........................updated plot..........................
 plot <- ggplot(subset_jobs) +
@@ -204,10 +236,10 @@ plot <- ggplot(subset_jobs) +
   geom_linerange(aes(y = occupation,
                      xmin = total_earnings_female, xmax = total_earnings_male)) + 
   geom_point(aes(x = total_earnings_male, y = occupation), 
-             color = "#CD93D8", 
+             color = earnings_pal["males"], 
              size = 2.5) +
   geom_point(aes(x = total_earnings_female, y = occupation), 
-             color = "#6A1E99", 
+             color = earnings_pal["females"], 
              size = 2.5) +
   
   # facet wrap by group ----
@@ -215,7 +247,45 @@ plot <- ggplot(subset_jobs) +
   
   # axis breaks & $ labels ----
   scale_x_continuous(labels = scales::label_currency(scale = 0.001, suffix = "k"),
-                     breaks = c(25000, 50000, 75000, 100000))
+                     breaks = c(25000, 50000, 75000, 100000)) + 
+  
+  labs(title = "Males earn more than females across occupations", 
+       subtitle = subtitle,
+       caption = caption,
+       x = "" , 
+       y = "") + 
+  
+  theme_minimal() + 
+  
+  theme(
+    plot.title.position = "plot", 
+    plot.title = element_text(face = "bold", 
+                              family = "josefin",
+                              size = 18, 
+                              color = earnings_pal["dark_text"]),
+    
+    plot.subtitle = ggtext::element_textbox(size = 11.5, 
+                                 family = "sen",
+                                 color = earnings_pal["light_text"],
+                                 margin = margin(t = 2, r = 0, b = 6, l = 0)), 
+    
+    plot.caption = ggtext::element_textbox(family = "sen",
+                                face = "italic", 
+                                color = earnings_pal["light_text"], 
+                                margin = margin(15, 0, 0, 0)), 
+    
+    strip.text = element_text(face = "bold", 
+                              family = "josefin",
+                              size = 10, 
+                              hjust = 0), 
+    
+    axis.text = element_text(family = "sen", 
+                             size = 9, 
+                             color = earnings_pal["light_text"]),
+    
+    panel.spacing.y = unit(0.5, "cm")
+    
+  )
 
 plot
 ```
@@ -226,10 +296,19 @@ plot
 #| eval: true
 #| echo: true
 # write plot to file (aka save as png) ----
+ggsave(
+  filename = here::here("week6", "images", "salary_plot.png"), 
+  plot = plot, 
+  device = "png", 
+  width = 8, 
+  height = 7, 
+  unit = "in"
+)
 ```
 
 ## Turn of `{showtext}` text rendering
 
 ```{r}
 # turn off {showtext} text rendering ----
+showtext_auto(FALSE)
 ```
