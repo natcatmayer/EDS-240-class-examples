@@ -41,6 +41,14 @@ showtext_auto()
 ##                               data wrangling                             ----
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+ca_season_counts <- bigfoot |>
+  filter(state == "California") |>
+  group_by(season) |>
+  count(season) |>
+  filter(season != "Unknown") |>
+  mutate(season = factor(season, c("Spring", "Summer", "Fall", "Winter"))) |> 
+  arrange(season, c("Spring", "Summer", "Fall", "Winter")) |>
+  ungroup()
 
 ##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ##                                waffle chart                              ----
@@ -62,7 +70,46 @@ caption <- "Source: Bigfoot Field Researchers Organization"
 
 #......................create waffle chart.......................
 
+ggplot(ca_season_counts, 
+       aes(fill = season, 
+           values = n)) + 
+  geom_waffle(color = "white", size = 0.3, n_rows = 10, 
+            #  make_proportional = TRUE
+              ) +
+  coord_fixed(ratio = 1) +
+  theme_void() + 
+  scale_fill_manual(values = season_palette) +
+  labs(fill = " ", 
+       title = title, 
+       subtitle = subtitle, 
+       caption = caption) + 
+  theme(
+    legend.position = "bottom", 
+    legend.text = element_text(family = "josefin", 
+                               color = plot_palette["gray"]),
+    
+    plot.title = element_text(hjust = 0.5, face = "bold", 
+                              family = "ultra", size = 17, 
+                              margin = margin(0, 0, 0.3, 0, "cm")), 
+    
+    plot.subtitle = element_text(hjust = 0.5, family = "josefin", 
+                                 color = plot_palette["gray"], 
+                                 size = 16, 
+                                 margin = margin(0, 0, 0.5, 0, "cm")), 
+    
+    plot.caption = element_text(face = "italic", 
+                                family = "josefin", 
+                                color = plot_palette["gray"]), 
+    
+    plot.background = element_rect(fill = plot_palette["beige"], 
+                                   color = plot_palette["beige"]), 
+    
+    plot.margin = margin(2, 2, 2, 2, "cm")
+  )
+
 #........................turn off showtext.......................
+
+showtext_auto(FALSE)
 ```
 
 ## Bump chart
