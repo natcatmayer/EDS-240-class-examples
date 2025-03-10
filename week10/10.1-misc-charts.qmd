@@ -1,0 +1,144 @@
+---
+title: "Lecture 10.1 TEMPLATE"
+subtitle: "Misc. Charts"
+author: "Your Name"
+date: 2025-03-10
+toc: true
+---
+
+::: {.callout-note}
+This template follows [lecture 10.1 slides](https://eds-240-data-viz.github.io/course-materials/lecture-slides/lecture10.1-misc-charts-slides.html#/title-slide){target="_blank"}. Please be sure to cross-reference the slides, which contain important information and additional context!
+:::
+
+## Waffle chart
+
+```{r}
+#| eval: true
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-align: "center"
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                    setup                                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#..........................load packages.........................
+library(tidyverse)
+library(waffle)
+library(showtext)
+
+#..........................import data...........................
+bigfoot <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-09-13/bigfoot.csv')
+
+#..........................import fonts..........................
+font_add_google(name = "Ultra", family = "ultra")
+font_add_google(name = "Josefin Sans", family = "josefin")
+
+#................enable {showtext} for rendering.................
+showtext_auto()
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                               data wrangling                             ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                waffle chart                              ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#........................create palettes.........................
+season_palette <- c("Spring" = "#357266", 
+                    "Summer" = "#FFB813", 
+                    "Fall" = "#983A06", 
+                    "Winter" = "#005F71")
+
+plot_palette <- c(gray = "#757473",
+                  beige = "#EFEFEF")
+
+#.......................create plot labels.......................
+title <- "Summer is the season of Bigfoot sightings in CA"
+subtitle <- "Winter, on the other hand, is a rare time to spot Sasquatch"
+caption <- "Source: Bigfoot Field Researchers Organization"
+
+#......................create waffle chart.......................
+
+#........................turn off showtext.......................
+```
+
+## Bump chart
+
+```{r}
+#| eval: true
+#| echo: true
+#| message: false
+#| warning: false
+#| fig-align: "center"
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                    setup                                 ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#..........................load packages.........................
+library(tidyverse)
+library(ggbump)
+library(ggtext)
+library(showtext)
+
+#..........................import data...........................
+jobs <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-03-05/jobs_gender.csv")
+
+#..........................import fonts..........................
+font_add_google(name = "Passion One", family = "passion")
+font_add_google(name = "Oxygen", family = "oxygen")
+
+#................enable {showtext} for rendering.................
+showtext_auto()
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                wrangle data                              ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#...................rank occupations by salary...................
+
+#........get top 8 occupation names for final year (2016)........
+
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+##                                 bump chart                               ----
+##~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#.................create palette & assign colors.................
+
+# grab magma palette ----
+magma_pal <- viridisLite::magma(12)
+
+# view magma colors ----
+# monochromeR::view_palette(magma_pal)
+
+# assign magma colors to top 8 occupations ----
+occupation_colors <- c(
+  "Physicians and surgeons" = magma_pal[3],
+  "Nurse anesthetists" = magma_pal[4],
+  "Dentists" = magma_pal[5],
+  "Architectural and engineering managers" = magma_pal[6],
+  "Lawyers" = magma_pal[7], 
+  "Podiatrists" = magma_pal[8],
+  "Chief executives" = magma_pal[9],
+  "Petroleum engineers" = magma_pal[10]
+)
+
+# create palette for additional plot theming ----
+plot_palette <- c(dark_purple = "#2A114E", 
+                  dark_gray = "#6D6B71",
+                  light_pink = "#FFF8F4")
+
+#.......................create plot labels.......................
+title <- "Top eight highest paying occupations in 2016"
+subtitle <- "Medical professionals held onto the same top three spots across years, while petroleum engineers steadily climbed the ranks from 10^th^ in 2013 to 4^th^ in 2016"
+caption <- "Data Source: Bureau of Labor Statistics"
+
+#........................create bump chart.......................
+
+#........................turn off showtext.......................
+
+```
+
+
